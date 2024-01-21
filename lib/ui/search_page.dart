@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yum_ventures/provider/search_provider.dart';
+import 'package:yum_ventures/widgets/support_widgets.dart';
 
 import '../data/model/list_result.dart';
 import '../data/result_state.dart';
@@ -73,29 +74,11 @@ class _SearchPageState extends State<SearchPage> {
       case ResultState.noData:
         return const Text('No results found.');
       case ResultState.error:
-        return Text.rich(
-          TextSpan(
-            children: [
-              const TextSpan(
-                text: 'Please check your internet\n',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextSpan(
-                text: '${provider.message}\n',
-              ),
-              const TextSpan(
-                text: 'If the problem still occur, kindly contact us',
-              ),
-            ],
-          ),
-          textAlign: TextAlign.center,
-        );
+        return errorStateMessage();
       default:
-        return Container();
+        return const Center(
+          child: Text('Something Went Wrong'),
+        );
     }
   }
 

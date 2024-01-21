@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:yum_ventures/provider/list_provider.dart';
 import 'package:yum_ventures/ui/search_page.dart';
 import 'package:yum_ventures/widgets/custom_restaurant_tile.dart';
+import 'package:yum_ventures/widgets/support_widgets.dart';
 import '../data/result_state.dart';
 
 class HomePage extends StatelessWidget {
@@ -46,32 +47,10 @@ class HomePage extends StatelessWidget {
                 },
               );
             } else if (value.state == ResultState.error) {
-              return Text.rich(
-                TextSpan(
-                  children: [
-                    const TextSpan(
-                      text: 'Please check your internet\n',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '${value.message}\n',
-                    ),
-                    const TextSpan(
-                      text: 'If the problem still occur, kindly contact us',
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.center,
-              );
+              return errorStateMessage();
             } else {
               return const Center(
-                child: Material(
-                  child: Text(''),
-                ),
+                child: Text('Something Went Wrong'),
               );
             }
           },
@@ -79,4 +58,6 @@ class HomePage extends StatelessWidget {
       )
     );
   }
+
+
 }

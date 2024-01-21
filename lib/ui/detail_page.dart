@@ -4,6 +4,7 @@ import 'package:yum_ventures/data/model/detail_result.dart';
 import 'package:yum_ventures/provider/detail_provider.dart';
 import 'package:yum_ventures/widgets/custom_text_field.dart';
 import '../data/result_state.dart';
+import '../widgets/support_widgets.dart';
 
 class DetailPage extends StatefulWidget {
   final String id;
@@ -190,35 +191,10 @@ class _DetailPageState extends State<DetailPage> {
               ),
             );
           } else if (value.state == ResultState.error) {
-            return Scaffold(
-              appBar: AppBar(),
-              body: Text.rich(
-                TextSpan(
-                  children: [
-                    const TextSpan(
-                      text: 'Please check your internet\n',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '${value.message}\n',
-                    ),
-                    const TextSpan(
-                      text: 'If the problem still occur, kindly contact us',
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.center,
-              ),
-            );
+            return errorStateMessage();
           } else {
             return const Center(
-              child: Material(
-                child: Text(''),
-              ),
+              child: Text('Something Went Wrong'),
             );
           }
         },

@@ -36,7 +36,7 @@ class SearchProvider extends ChangeNotifier{
     } catch (e) {
       _state = ResultState.error;
       notifyListeners();
-      return _message = 'Error -> $e';
+      return _message = 'Error -> Something Went Wrong';
     }
   }
 }
