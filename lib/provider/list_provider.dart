@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:yum_ventures/data/api/api_service.dart';
 import '../data/model/list_result.dart';
-import '../data/result_state.dart';
+import '../utils/result_state.dart';
 
-class ListProvider extends ChangeNotifier{
+class ListProvider extends ChangeNotifier {
   final ApiService apiService = ApiService();
 
   late ResultState _state;
@@ -12,7 +12,7 @@ class ListProvider extends ChangeNotifier{
   String _message = '';
   String get message => _message;
 
-  ListProvider(){
+  ListProvider() {
     fetchList();
   }
 
@@ -20,11 +20,11 @@ class ListProvider extends ChangeNotifier{
   ListResult get listResult => _listResult;
 
   Future<dynamic> fetchList() async {
-    try{
+    try {
       _state = ResultState.loading;
       notifyListeners();
       final restaurants = await apiService.fetchList();
-      if (restaurants.restaurants.isEmpty){
+      if (restaurants.restaurants.isEmpty) {
         _state = ResultState.noData;
         notifyListeners();
         return _message = 'empty data';

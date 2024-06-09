@@ -4,9 +4,11 @@ import 'package:yum_ventures/provider/search_provider.dart';
 import 'package:yum_ventures/widgets/support_widgets.dart';
 
 import '../data/model/list_result.dart';
-import '../data/result_state.dart';
+import '../utils/result_state.dart';
 import '../widgets/custom_restaurant_tile.dart';
+
 class SearchPage extends StatefulWidget {
+  static const routeName = '/search';
   const SearchPage({super.key});
 
   @override
@@ -21,6 +23,7 @@ class _SearchPageState extends State<SearchPage> {
     _searchController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,30 +35,32 @@ class _SearchPageState extends State<SearchPage> {
         child: Consumer<SearchProvider>(
           builder: (context, provider, child) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
               child: Column(
                 children: [
                   TextField(
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     controller: _searchController,
                     onChanged: (query) {
                       provider.fetchSearch(query);
                     },
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20)
-                      ),
+                          borderRadius: BorderRadius.circular(20)),
                       focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20)
-                      ),
-                      prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary),
+                          borderRadius: BorderRadius.circular(20)),
+                      prefixIcon: Icon(Icons.search,
+                          color: Theme.of(context).colorScheme.secondary),
                       hintText: 'Search',
                     ),
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
                       height: MediaQuery.of(context).size.height - 200,
-                      child: _buildSearchResults(provider)
-                  )
+                      child: _buildSearchResults(provider))
                 ],
               ),
             );
@@ -87,7 +92,10 @@ class _SearchPageState extends State<SearchPage> {
       itemCount: restaurants.length,
       itemBuilder: (context, index) {
         var currentRestaurant = restaurants[index];
-        return CustomRestaurantTile(currentRestaurant: currentRestaurant, index: index, context: context);
+        return CustomRestaurantTile(
+            currentRestaurant: currentRestaurant,
+            index: index,
+            context: context);
       },
     );
   }

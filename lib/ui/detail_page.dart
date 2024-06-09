@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:yum_ventures/common/navigation.dart';
 import 'package:yum_ventures/data/model/detail_result.dart';
 import 'package:yum_ventures/provider/detail_provider.dart';
 import 'package:yum_ventures/widgets/custom_text_field.dart';
-import '../data/result_state.dart';
+import '../utils/result_state.dart';
 import '../widgets/support_widgets.dart';
 
 class DetailPage extends StatefulWidget {
+  static const routeName = '/detail_page';
+
   final String id;
+
   const DetailPage({super.key, required this.id});
 
   @override
@@ -36,7 +40,8 @@ class _DetailPageState extends State<DetailPage> {
             return Scaffold(
               body: Center(
                 child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.secondary),
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               ),
             );
           } else if (value.state == ResultState.hasData) {
@@ -62,6 +67,18 @@ class _DetailPageState extends State<DetailPage> {
                             child: Image.network(
                               'https://restaurant-api.dicoding.dev/images/medium/${currentRestaurant.pictureId}',
                               fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.error_outline),
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child;
+                                } else {
+                                  return const Center(
+                                      child: CircularProgressIndicator(
+                                          color: Colors.white));
+                                }
+                              },
                             )),
                       ),
                       const SizedBox(height: 16),
@@ -75,6 +92,8 @@ class _DetailPageState extends State<DetailPage> {
                                 .titleLarge!
                                 .copyWith(
                                   fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
                           ),
                           Row(
@@ -88,7 +107,14 @@ class _DetailPageState extends State<DetailPage> {
                               ),
                               Text(
                                 currentRestaurant.rating.toString(),
-                                style: Theme.of(context).textTheme.labelLarge!,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                    ),
                               ),
                             ],
                           )
@@ -115,7 +141,8 @@ class _DetailPageState extends State<DetailPage> {
                                 .textTheme
                                 .titleMedium!
                                 .copyWith(
-                                  color: Theme.of(context).colorScheme.tertiary,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
                           ),
                         ],
@@ -124,8 +151,8 @@ class _DetailPageState extends State<DetailPage> {
                       Text(
                         currentRestaurant.description,
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            overflow: TextOverflow.ellipsis,
+                            color: Theme.of(context).colorScheme.onPrimary),
                         maxLines: 8,
                         textAlign: TextAlign.justify,
                       ),
@@ -144,6 +171,8 @@ class _DetailPageState extends State<DetailPage> {
                                 .titleMedium!
                                 .copyWith(
                                   fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
                           ),
                           ElevatedButton(
@@ -174,10 +203,11 @@ class _DetailPageState extends State<DetailPage> {
                                     .textTheme
                                     .bodyMedium!
                                     .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                        fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                    ),
                               ),
                               subtitle: Text(review.review),
                               trailing: Text(review.date),
@@ -191,7 +221,10 @@ class _DetailPageState extends State<DetailPage> {
               ),
             );
           } else if (value.state == ResultState.error) {
-            return errorStateMessage();
+            return Scaffold(
+              appBar: AppBar(),
+              body: errorStateMessage(),
+            );
           } else {
             return const Center(
               child: Text('Something Went Wrong'),
@@ -205,6 +238,7 @@ class _DetailPageState extends State<DetailPage> {
   Future<dynamic> _buildReviewDialog(BuildContext context,
       DetailProvider reviewProvider, Restaurant currentRestaurant) {
     return showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
         actions: [
@@ -213,7 +247,7 @@ class _DetailPageState extends State<DetailPage> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigation.back();
                 },
                 style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 10)),
@@ -234,10 +268,9 @@ class _DetailPageState extends State<DetailPage> {
                     if (context.mounted) {
                       _nameController.clear();
                       _reviewController.clear();
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Thanks for the review!'))
-                      );
+                      Navigation.back();
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Thanks for the review!')));
                     }
                   }
                 },
@@ -252,6 +285,16 @@ class _DetailPageState extends State<DetailPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Text(
+                'Add Review',
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
               CustomTextField(controller: _nameController, hintText: 'name'),
               const SizedBox(height: 16),
               CustomTextField(
@@ -259,6 +302,7 @@ class _DetailPageState extends State<DetailPage> {
             ],
           ),
         ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -272,6 +316,7 @@ class _DetailPageState extends State<DetailPage> {
           'Foods:',
           style: Theme.of(context).textTheme.titleMedium!.copyWith(
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
         ),
         SizedBox(
@@ -284,6 +329,9 @@ class _DetailPageState extends State<DetailPage> {
             children: menus.foods
                 .map((food) => Card(
                       color: Theme.of(context).colorScheme.secondary,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      elevation: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Center(
@@ -294,7 +342,7 @@ class _DetailPageState extends State<DetailPage> {
                                 .textTheme
                                 .bodyMedium!
                                 .copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w500,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -313,6 +361,7 @@ class _DetailPageState extends State<DetailPage> {
           'Drinks:',
           style: Theme.of(context).textTheme.titleMedium!.copyWith(
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
         ),
         SizedBox(
@@ -325,6 +374,9 @@ class _DetailPageState extends State<DetailPage> {
             children: menus.drinks
                 .map((food) => Card(
                       color: Theme.of(context).colorScheme.secondary,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      elevation: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Center(
@@ -335,7 +387,7 @@ class _DetailPageState extends State<DetailPage> {
                                 .textTheme
                                 .bodyMedium!
                                 .copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w500,
                                   overflow: TextOverflow.ellipsis,
                                 ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:yum_ventures/data/api/api_service.dart';
 import 'package:yum_ventures/data/model/search_result.dart';
-import '../data/result_state.dart';
+import '../utils/result_state.dart';
 
-class SearchProvider extends ChangeNotifier{
+class SearchProvider extends ChangeNotifier {
   final ApiService apiService = ApiService();
 
   late ResultState _state;
@@ -12,7 +12,7 @@ class SearchProvider extends ChangeNotifier{
   String _message = '';
   String get message => _message;
 
-  SearchProvider({required query}){
+  SearchProvider({required query}) {
     fetchSearch(query);
   }
 
@@ -20,11 +20,11 @@ class SearchProvider extends ChangeNotifier{
   SearchResult get searchResult => _searchResult;
 
   Future<dynamic> fetchSearch(String query) async {
-    try{
+    try {
       _state = ResultState.loading;
       notifyListeners();
       final search = await apiService.fetchSearch(query);
-      if (search.restaurants.isEmpty){
+      if (search.restaurants.isEmpty) {
         _state = ResultState.noData;
         notifyListeners();
         return _message = 'empty data';
